@@ -13,11 +13,11 @@ async function signupUser (req, res) {
         }
         else {
             const signupNewUserExecute = await signupNewUser(req.body);
-            if(signupNewUserExecute) {
-                return res.send("User is created successfully")
+            if(signupNewUserExecute.isValid) {
+                return res.send(signupNewUserExecute.message)
             }
             else {
-                return res.send("Registration is failed")
+                return res.send(signupNewUserExecute.message)
             }
         }
     } catch (err) {
@@ -26,11 +26,19 @@ async function signupUser (req, res) {
     }
 }
 
-
+function loginPage (req, res) {
+    try {
+        res.send("Welcome to the login page")
+    } catch (err) {
+        console.log("An error occurred while user trying to login", err);
+        throw err;
+    }
+}
 
 
 
 module.exports = {
     signupPage,
-    signupUser
+    signupUser,
+    loginPage
 }

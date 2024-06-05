@@ -38,7 +38,7 @@ async function createNewUserRepo (username, email, phone, kyc, pass) {
         VALUES ($1, $2, $3, $4, $5)
         RETURNING *;`;
         const result = await pool.query(userQuery, [username, email, phone, kyc, pass]);
-        console.log("the user is created successfully", result.rows[0]);
+        console.log(result.rows[0]);
         return true;
     } catch (err) {
         console.log("An error occurred while creating a new user in the Repo", err); 

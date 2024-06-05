@@ -9,10 +9,10 @@ async function changeUserStatus (req, res) {
         } 
         else {
             const changeUserSts = await profileHelper.changeUserStatus(req.body)
-            if(changeUserSts) {
-                return res.send("The user status is changed successfully")
+            if(changeUserSts.isValid) {
+                return res.send(changeUserSts.message)
             } else {
-                return res.send("Updating failed")
+                return res.send(changeUserSts.message)
             }
         }
     } catch (err) {
@@ -29,10 +29,10 @@ async function deleteUserByEmail (req, res) {
             res.send(error.message)
         } else {
             const deleteUser = await profileHelper.deleteUserByEmailH(req.body);
-            if(deleteUser) {
-                return res.send("User deleted successfully")
+            if(deleteUser.isValid) {
+                return res.send(deleteUser.message)
             } else {
-                return res.send("Deleting failed")
+                return res.send(deleteUser.message)
             }
         }
     } catch (err) {

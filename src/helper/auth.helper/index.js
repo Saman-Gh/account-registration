@@ -17,14 +17,13 @@ async function signupNewUser (userData) {
                 const hashPassword = await encryptPassword(newUser.password);
                 const result = await createNewUserRepo(newUser.username, newUser.email, newUser.phone, newUser.kyc, hashPassword)
                 if(result) {
-                    return true
-                } return false
+                    return {message: "The user is created successfully", isValid: true}
+                } 
+                // return false
             } 
-            console.log("The user is exists already");
-            return false;
+            return {message: "The entered data is already in use", isValid: false}
         }
-        console.log("The KYC number is not valid");
-        return false
+        return {message: "The KYC number is not valid", isValid: false}
     } catch (err) {
         console.log("An error occurred while signing a new user", err);
         throw err;
