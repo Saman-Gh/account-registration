@@ -5,12 +5,20 @@ async function changeUserStatus (userData) {
         email: userData.email,
     }
     try {
-        const currentUserStatus = await profileRepository.gettingUserStatus(user.email);
-        if(currentUserStatus === "active") {
-            await profileRepository.changeUserStatusRepo(user.email, 'deactive');
-            return true;
-        } else {
-            console.log("The user status is deactivated already");
+        const userExist = await profileRepository.userExistanceCheckByEmail(user.email)
+        if(userExist){
+            const currentUserStatus = await profileRepository.gettingUserStatus(user.email);
+            if(currentUserStatus === "active") {
+                await profileRepository.changeUserStatusRepo(user.email, 'deactive');
+                return true;
+            } 
+            else if(currentUserStatus === "deactive") {
+                await profileRepository.changeUserStatusRepo(user.email, 'active');
+                return true;
+            } 
+        }
+        else {
+            console.log("The user does not exists");
             return false;
         }
     } catch (err) {

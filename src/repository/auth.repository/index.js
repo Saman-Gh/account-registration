@@ -9,7 +9,7 @@ async function kycExistanceCheck (kyc) {
         }
         return false
     } catch (err) {
-        console.log("An error occurred while checking a kyc existance", err);
+        console.log("An error occurred while checking a kyc existance in the Repo", err);
         throw err;
     }
 }
@@ -41,14 +41,10 @@ async function createNewUserRepo (username, email, phone, kyc, pass) {
         console.log("the user is created successfully", result.rows[0]);
         return true;
     } catch (err) {
-        console.log("An error occurred while creating a new user", err); 
+        console.log("An error occurred while creating a new user in the Repo", err); 
         throw err;
     }
 }
-
-
-
-
 
 module.exports = {
     kycExistanceCheck,
