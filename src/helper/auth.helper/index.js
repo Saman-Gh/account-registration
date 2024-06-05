@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
-const { kycExistanceCheck, userExistanceCheck, createNewUserRepo } = require("../../repository/auth.repository");
+const jwt = require('jsonwebtoken');
+
+const authRepository = require("../../repository/auth.repository");
+
 
 async function signupNewUser (userData) {
     const newUser = {
@@ -10,12 +13,12 @@ async function signupNewUser (userData) {
         password: userData.password
     }
     try {
-        const kycStatus = await kycExistanceCheck(newUser.kyc)
+        const kycStatus = await authRepository.kycExistanceCheck(newUser.kyc)
         if(kycStatus) {
-            const {userExists, emailExists, phoneExists, kycExists} = await userExistanceCheck(newUser.username, newUser.email, newUser.phone, newUser.kyc)
+            const {userExists, emailExists, phoneExists, kycExists} = await authRepository.userExistanceCheck(newUser.username, newUser.email, newUser.phone, newUser.kyc)
             if(!userExists && !emailExists && !phoneExists && !kycExists) {
                 const hashPassword = await encryptPassword(newUser.password);
-                const result = await createNewUserRepo(newUser.username, newUser.email, newUser.phone, newUser.kyc, hashPassword)
+                const result = await authRepository.createNewUserRepo(newUser.username, newUser.email, newUser.phone, newUser.kyc, hashPassword)
                 if(result) {
                     return {message: "The user is created successfully", isValid: true}
                 } 
@@ -41,9 +44,41 @@ async function encryptPassword (pass) {
     }
 }
 
+async function decryptPassword (pass, hashedPass) {
+    try {
+        return bcrypt.compare(pass, hashedPass);
+    } catch (err) {
+        console.error("An error occurred while decrypting a password", err);
+        throw err;
+    }
+}
+
+
+async function loginUser (userData) {
+    const user = {
+        email: userData.email,
+        password: userData.password
+    }
+    try {
+        const emailExists = await authRepository.userExistanceCheckByEmail(user.email)
+        if(emailExists) {
+            const hashedPassword = await authRepository.fetchHashedPassRepo(user.email);
+            const isPassMatch = await decryptPassword(user.password, hashedPassword)
+            if(isPassMatch){
+                const token = jwt.sign()
+            }
+        } else {
+            return {message: "The user does not exist", isValid: false}
+        }
+    } catch (err) {
+        console.error("An error occurred while trying to login", err);
+        throw err;
+    }
+}
 
 module.exports = {
-    signupNewUser
+    signupNewUser,
+    loginUser
 }
 
 

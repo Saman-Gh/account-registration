@@ -1,5 +1,5 @@
-const { signupNewUser } = require("../../../helper/auth.helper");
-const { signupValidator } = require("../auth.validator");
+const authHelper = require("../../../helper/auth.helper");
+const authValidator = require("../auth.validator");
 
 function signupPage (req, res) {
     res.send("Welcome to the signup page")
@@ -7,12 +7,12 @@ function signupPage (req, res) {
 
 async function signupUser (req, res) {
     try {
-        const {error} = signupValidator(req.body)
+        const {error} = authValidator.signupValidator(req.body)
         if(error) {
             res.send(error.message)
         }
         else {
-            const signupNewUserExecute = await signupNewUser(req.body);
+            const signupNewUserExecute = await authHelper.signupNewUser(req.body);
             if(signupNewUserExecute.isValid) {
                 return res.send(signupNewUserExecute.message)
             }
@@ -35,10 +35,24 @@ function loginPage (req, res) {
     }
 }
 
+async function loginUser (req, res) {
+    try {
+        const {error} = authValidator.loginValidator(req.body);
+        if(error) {
+            res.send(error.message)
+        }
+        else {
+            const loginUserExecute = await authHelper.loginUser(req.body);
+        }
+    } catch (err) {
+        console.log("An error occurred while user ");
+    }
+} 
 
 
 module.exports = {
     signupPage,
     signupUser,
-    loginPage
+    loginPage,
+    loginUser
 }

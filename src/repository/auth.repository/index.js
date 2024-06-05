@@ -46,8 +46,35 @@ async function createNewUserRepo (username, email, phone, kyc, pass) {
     }
 }
 
+async function userExistanceCheckByEmail (email) {
+    try {
+        const userQuery = `SELECT * FROM users WHERE email = $1`;
+        const result = await pool.query(userQuery, [email]);
+        if(result.rows.length === 1){
+            return true;
+        }
+        return false;
+    } catch (err) {
+        console.error("An error occurred while checking an user existance in the Repo", err);
+        throw err;
+    }
+}
+
+async function fetchHashedPassRepo (email) {
+    try {
+        const passQuery = `SELECT password FROM users WHERE email = $1`;
+        const result = await pool.query(passQuery, [email]);
+        return result.rows[0].password
+    } catch (err) {
+        console.error("An error occurred while fetching a password", err);
+        throw err;
+    }
+}
+
 module.exports = {
     kycExistanceCheck,
     userExistanceCheck,
     createNewUserRepo,
+    userExistanceCheckByEmail,
+    fetchHashedPassRepo
 }
